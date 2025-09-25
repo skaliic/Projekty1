@@ -26,7 +26,7 @@ class Program
                 Choice? playerChoice = AskPlayerChoice();
                 if (playerChoice == null)
                 {
-                    // hráč zadal "q" => konec hry úplně
+                    
                     Console.WriteLine("Ukončuji hru. Čau!");
                     return;
                 }
@@ -67,7 +67,7 @@ class Program
         }
     }
 
-    // Zeptá se hráče, jakou sérii chce hrát (best of 1/3/5/7...).
+    
     static int AskBestOf()
     {
         while (true)
@@ -81,7 +81,7 @@ class Program
         }
     }
 
-    // Zeptá se hráče na volbu, vrátí null pokud hráč chce ukončit ("q")
+    
     static Choice? AskPlayerChoice()
     {
         Console.WriteLine("Zadej volbu: (1) Kámen, (2) Nůžky, (3) Papír. Nebo 'q' pro ukončení.");
@@ -92,7 +92,7 @@ class Program
             if (string.IsNullOrEmpty(input)) continue;
             if (input == "q" || input == "quit") return null;
 
-            // akceptuj čísla i slova
+            
             if (int.TryParse(input, out int num) && num >= 1 && num <= 3)
                 return (Choice)num;
 
@@ -104,14 +104,12 @@ class Program
         }
     }
 
-    // Vrací 0 = remíza, 1 = hráč vyhrál, -1 = počítač vyhrál
+    
     static int DecideRound(Choice player, Choice comp)
     {
         if (player == comp) return 0;
 
-        // Kámen(1) porazí Nůžky(2)
-        // Nůžky(2) porazí Papír(3)
-        // Papír(3) porazí Kámen(1)
+        
         if ((player == Choice.Kamen && comp == Choice.Nuzky) ||
             (player == Choice.Nuzky && comp == Choice.Papir) ||
             (player == Choice.Papir && comp == Choice.Kamen))
