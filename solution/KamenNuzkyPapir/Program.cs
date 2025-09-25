@@ -1,10 +1,8 @@
-﻿namespace KamenNuzkyPapir
+﻿using System;
+
+class Program
 {
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
-    }
+    enum Choice { Kamen = 1, Nuzky = 2, Papir = 3 }
+
+    static avoid Main()
 }
