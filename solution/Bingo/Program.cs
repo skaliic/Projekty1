@@ -32,11 +32,11 @@ class Program
             }
             else if (playerGuess < numberToGuess)
             {
-                Console.WriteLine("Hledané číslo je větší.");
+                Console.WriteLine("Číslo co hledáš je větší.");
             }
             else
             {
-                Console.WriteLine("Hledané číslo je menší.");
+                Console.WriteLine("Číslo co hledáš je menší.");
             }
 
             if (attempts >= maxAttempts)
