@@ -41,7 +41,7 @@ class Program
 
         Console.Clear();
         if (new string(guessedWord) == wordToGuess)
-            Console.WriteLine($"Gratulace! Uhodl jsi slovo: {wordToGuess}");
+            Console.WriteLine($"Super! Uhodl jsi slovo: {wordToGuess}");
         else
             Console.WriteLine($"Prohrál jsi! Slovo bylo: {wordToGuess}");
     }
