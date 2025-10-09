@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Net;
+using System.Windows.Forms;
 
 namespace MonoGame1
 {
@@ -71,5 +73,32 @@ namespace MonoGame1
 
             base.Draw(gameTime);
         }
+    }
+
+    public class Player
+    {
+        public Vector2 Position;
+        public Color Color;
+        public int Size = 50;
+        public float Speed = 3f;
+
+        private Keys up, down, left, right;
+
+        public Player(Vector2 position, Color color, Keys up, Keys Down, Keys Left, Keys Right)
+        {
+            Position = position;
+            Color = color;
+            this.up = up;
+            this.down = down;
+            this.left = left;
+            this.right = right;
+        }
+
+        public Rectangle BoundingBox => new Rectangle((int)Position.X, (int)Position.Y, Size, Size);
+
+        public void Update(List<Player> players) 
+        
+           
+        
     }
 }
