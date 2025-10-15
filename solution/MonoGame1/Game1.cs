@@ -63,7 +63,7 @@ namespace MonoGame1
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.White);
+            GraphicsDevice.Clear(Color.LightGray);
 
             _spriteBatch.Begin();
             foreach (var player in players)
