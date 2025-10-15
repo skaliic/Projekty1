@@ -1,9 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Net;
-using System.Windows.Forms;
 
 namespace MonoGame1
 {
@@ -55,7 +54,7 @@ namespace MonoGame1
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             foreach (var player in players)
-                player.Update(players);
+                player.Update(players, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
             base.Update(gameTime);
 
         }
@@ -96,9 +95,41 @@ namespace MonoGame1
 
         public Rectangle BoundingBox => new Rectangle((int)Position.X, (int)Position.Y, Size, Size);
 
-        public void Update(List<Player> players) 
-        
-           
-        
+        public void Update(List<Player> players, int screenWidth, int screenHeight)
+        {
+            Vector2 oldPos = Position;
+            KeyboardState ks = Keyboard.GetState();
+
+            Vector2 move = Vector2.Zero;
+
+            if (ks.IsKeyDown(up)) move.Y -= Speed;
+            if (ks.IsKeyDown(down)) move.Y += Speed;
+            if (ks.IsKeyDown(left)) move.X -= Speed;
+            if (ks.IsKeyDown(right)) move.X += Speed;
+
+            Position.X += move.X;
+            foreach (var other in players)
+            {
+                if (other == this) continue;
+                if (BoundingBox.Intersects(other.BoundingBox))
+                    Position.X = oldPos.X;
+            }
+
+            if (Position.X < 0) Position.X = 0;
+            if (Position.Y < 0) Position.Y = 0;
+            if (Position.X > screenWidth - Size) Position.X = screenWidth - Size;
+            if (Position.Y > screenHeight - Size) Position.Y = screenHeight - Size;
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Texture2D texture)
+        {
+            spriteBatch.Draw(texture, BoundingBox, Color);
+
+
+
+
+
+
+        }
     }
 }
