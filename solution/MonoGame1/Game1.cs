@@ -53,8 +53,10 @@ namespace MonoGame1
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            
             foreach (var player in players)
                 player.Update(players, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+            
             base.Update(gameTime);
 
         }
@@ -83,7 +85,7 @@ namespace MonoGame1
 
         private Keys up, down, left, right;
 
-        public Player(Vector2 position, Color color, Keys up, Keys Down, Keys Left, Keys Right)
+        public Player(Vector2 position, Color color, Keys up, Keys down, Keys left, Keys right)
         {
             Position = position;
             Color = color;
@@ -99,7 +101,7 @@ namespace MonoGame1
         {
             Vector2 oldPos = Position;
             KeyboardState ks = Keyboard.GetState();
-
+            
             Vector2 move = Vector2.Zero;
 
             if (ks.IsKeyDown(up)) move.Y -= Speed;
@@ -113,6 +115,14 @@ namespace MonoGame1
                 if (other == this) continue;
                 if (BoundingBox.Intersects(other.BoundingBox))
                     Position.X = oldPos.X;
+            }
+            
+            Position.Y += move.Y;
+            foreach (var other in players)
+            {
+                if (other == this) continue;
+                if (BoundingBox.Intersects(other.BoundingBox))
+                    Position.Y = oldPos.Y;
             }
 
             if (Position.X < 0) Position.X = 0;
