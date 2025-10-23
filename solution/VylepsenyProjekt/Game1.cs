@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Net;
 
-namespace MonoGame1
+namespace VylepsenyProjekt
 {
     public class Game1 : Game
     {
