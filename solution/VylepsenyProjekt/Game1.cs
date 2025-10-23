@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Net;
 
 namespace VylepsenyProjekt
 {
@@ -13,6 +12,8 @@ namespace VylepsenyProjekt
 
         private Texture2D _squareTexture;
         private List<Player> players;
+        private List<Tlacitko> tlacitka;
+        private List<Dvere> dvere;
 
         public Game1()
         {
@@ -23,8 +24,6 @@ namespace VylepsenyProjekt
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             _graphics.PreferredBackBufferWidth = 800;
             _graphics.PreferredBackBufferHeight = 600;
             _graphics.ApplyChanges();
@@ -35,6 +34,19 @@ namespace VylepsenyProjekt
                 new Player(new Vector2(400, 300), Color.Blue, Keys.Up, Keys.Down, Keys.Left, Keys.Right)
             };
 
+            tlacitka = new List<Tlacitko>();
+            dvere = new List<Dvere>();
+
+            var dvere1 = new Dvere(new Vector2(50, 250), 20, 100, Color.DarkGreen);
+            var button1 = new Tlacitko(new Vector2(650, 500), 40, Color.Yellow, dvere1);
+            dvere.Add(dvere1);
+            tlacitka.Add(button1);
+
+            var dvere2 = new Dvere(new Vector2(730, 150), 20, 100, Color.DarkRed);
+            var button2 = new Tlacitko(new Vector2(150, 50), 40, Color.Orange, dvere2);
+            dvere.Add(dvere2);
+            tlacitka.Add(button2);
+
             base.Initialize();
         }
 
@@ -44,9 +56,6 @@ namespace VylepsenyProjekt
 
             _squareTexture = new Texture2D(GraphicsDevice, 1, 1);
             _squareTexture.SetData(new[] { Color.White });
-
-
-            // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
@@ -54,11 +63,13 @@ namespace VylepsenyProjekt
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            foreach (var tlacitko in tlacitka)
+                tlacitko.Update(players);
+
             foreach (var player in players)
-                player.Update(players, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+                player.Update(players, dvere, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
 
             base.Update(gameTime);
-
         }
 
         protected override void Draw(GameTime gameTime)
@@ -66,13 +77,93 @@ namespace VylepsenyProjekt
             GraphicsDevice.Clear(Color.LightGray);
 
             _spriteBatch.Begin();
+
+            foreach (var dv in dvere)
+                dv.Draw(_spriteBatch, _squareTexture);
+
+            foreach (var tlacitko in tlacitka)
+                tlacitko.Draw(_spriteBatch, _squareTexture);
+
             foreach (var player in players)
                 player.Draw(_spriteBatch, _squareTexture);
+
             _spriteBatch.End();
 
-            // TODO: Add your drawing code here
-
             base.Draw(gameTime);
+        }
+    }
+
+    public class Tlacitko
+    {
+        public Vector2 Position;
+        public int Size;
+        public Color Color;
+        public bool IsPressed;
+        private Dvere PripojeneDvere;
+
+        public Tlacitko(Vector2 position, int size, Color color, Dvere dvere)
+        {
+            Position = position;
+            Size = size;
+            Color = color;
+            PripojeneDvere = dvere;
+            IsPressed = false;
+        }
+
+        public Rectangle BoundingBox => new Rectangle((int)Position.X, (int)Position.Y, Size, Size);
+
+        public void Update(List<Player> players)
+        {
+            IsPressed = false;
+            foreach (var player in players)
+            {
+                if (player.BoundingBox.Intersects(BoundingBox))
+                {
+                    IsPressed = true;
+                    break;
+                }
+            }
+
+            if (PripojeneDvere != null)
+                PripojeneDvere.IsOpen = IsPressed;
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Texture2D texture)
+        {
+            Color drawColor = IsPressed ? Color.Lerp(Color, Color.White, 0.5f) : Color;
+            spriteBatch.Draw(texture, BoundingBox, drawColor);
+        }
+    }
+
+    public class Dvere
+    {
+        public Vector2 Position;
+        public int Width;
+        public int Height;
+        public Color Color;
+        public bool IsOpen;
+
+        public Dvere(Vector2 position, int width, int height, Color color)
+        {
+            Position = position;
+            Width = width;
+            Height = height;
+            Color = color;
+            IsOpen = false;
+        }
+
+        public Rectangle BoundingBox => new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
+
+        public void Draw(SpriteBatch spriteBatch, Texture2D texture)
+        {
+            if (!IsOpen)
+            {
+                spriteBatch.Draw(texture, BoundingBox, Color);
+            }
+            else
+            {
+                spriteBatch.Draw(texture, BoundingBox, Color * 0.3f);
+            }
         }
     }
 
@@ -97,7 +188,7 @@ namespace VylepsenyProjekt
 
         public Rectangle BoundingBox => new Rectangle((int)Position.X, (int)Position.Y, Size, Size);
 
-        public void Update(List<Player> players, int screenWidth, int screenHeight)
+        public void Update(List<Player> players, List<Dvere> dvere, int screenWidth, int screenHeight)
         {
             Vector2 oldPos = Position;
             KeyboardState ks = Keyboard.GetState();
@@ -117,11 +208,24 @@ namespace VylepsenyProjekt
                     Position.X = oldPos.X;
             }
 
+            foreach (var dv in dvere)
+            {
+                if (!dv.IsOpen && BoundingBox.Intersects(dv.BoundingBox))
+                    Position.X = oldPos.X;
+            }
+
             Position.Y += move.Y;
+
             foreach (var other in players)
             {
                 if (other == this) continue;
                 if (BoundingBox.Intersects(other.BoundingBox))
+                    Position.Y = oldPos.Y;
+            }
+
+            foreach (var dv in dvere)
+            {
+                if (!dv.IsOpen && BoundingBox.Intersects(dv.BoundingBox))
                     Position.Y = oldPos.Y;
             }
 
@@ -134,12 +238,6 @@ namespace VylepsenyProjekt
         public void Draw(SpriteBatch spriteBatch, Texture2D texture)
         {
             spriteBatch.Draw(texture, BoundingBox, Color);
-
-
-
-
-
-
         }
     }
 }
