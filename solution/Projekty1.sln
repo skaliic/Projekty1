@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bingo", "Bingo\Bingo.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGame1", "MonoGame1\MonoGame1.csproj", "{B1E09268-1C62-4E6C-93FE-D4783FC91EFE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VylepsenyProjekt", "VylepsenyProjekt\VylepsenyProjekt.csproj", "{96DD26D0-80DB-4E2E-A86B-CD46D3342918}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{B1E09268-1C62-4E6C-93FE-D4783FC91EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1E09268-1C62-4E6C-93FE-D4783FC91EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1E09268-1C62-4E6C-93FE-D4783FC91EFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96DD26D0-80DB-4E2E-A86B-CD46D3342918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96DD26D0-80DB-4E2E-A86B-CD46D3342918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96DD26D0-80DB-4E2E-A86B-CD46D3342918}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96DD26D0-80DB-4E2E-A86B-CD46D3342918}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
