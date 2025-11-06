@@ -14,6 +14,9 @@ namespace VylepsenyProjekt
         private List<Player> players;
         private List<Tlacitko> tlacitka;
         private List<Dvere> dvere;
+        private SpriteFont _font; 
+
+        private bool levelComplete = false;
 
         public Game1()
         {
@@ -56,6 +59,8 @@ namespace VylepsenyProjekt
 
             _squareTexture = new Texture2D(GraphicsDevice, 1, 1);
             _squareTexture.SetData(new[] { Color.White });
+
+            _font = Content.Load<SpriteFont>("DefaultFont");
         }
 
         protected override void Update(GameTime gameTime)
@@ -68,6 +73,28 @@ namespace VylepsenyProjekt
 
             foreach (var player in players)
                 player.Update(players, dvere, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+
+            bool allPlayersAtDoors = true;
+            foreach (var player in players)
+            {
+                bool playerAtDoor = false;
+                foreach (var dv in dvere)
+                {
+                    if (dv.IsOpen && player.BoundingBox.Intersects(dv.BoundingBox))
+                    {
+                        playerAtDoor = true;
+                        break;
+                    }
+                }
+                if (!playerAtDoor)
+                {
+                    allPlayersAtDoors = false;
+                    break;
+                }
+            }
+
+            if (allPlayersAtDoors)
+                levelComplete = true;
 
             base.Update(gameTime);
         }
@@ -86,6 +113,12 @@ namespace VylepsenyProjekt
 
             foreach (var player in players)
                 player.Draw(_spriteBatch, _squareTexture);
+
+
+            if (levelComplete)
+            {
+                _spriteBatch.DrawString(_font, "Level Complete!", new Vector2(300, 250), Color.Black);
+            }
 
             _spriteBatch.End();
 
