@@ -101,6 +101,8 @@ namespace VylepsenyProjekt
         public bool IsPressed;
         private Dvere PripojeneDvere;
 
+        private bool wasPlayerOnButtonLastFrame;
+
         public Tlacitko(Vector2 position, int size, Color color, Dvere dvere)
         {
             Position = position;
@@ -108,24 +110,33 @@ namespace VylepsenyProjekt
             Color = color;
             PripojeneDvere = dvere;
             IsPressed = false;
+            wasPlayerOnButtonLastFrame = false;
         }
 
         public Rectangle BoundingBox => new Rectangle((int)Position.X, (int)Position.Y, Size, Size);
 
         public void Update(List<Player> players)
         {
-            IsPressed = false;
+            bool playerOnButton = false;
+
             foreach (var player in players)
             {
                 if (player.BoundingBox.Intersects(BoundingBox))
                 {
-                    IsPressed = true;
+                    playerOnButton = true;
                     break;
                 }
             }
 
-            if (PripojeneDvere != null)
-                PripojeneDvere.IsOpen = IsPressed;
+            if (playerOnButton && !wasPlayerOnButtonLastFrame)
+            {
+                IsPressed = !IsPressed;
+                if (PripojeneDvere != null)
+                    PripojeneDvere.IsOpen = IsPressed;
+            }
+
+            wasPlayerOnButtonLastFrame = playerOnButton;
+
         }
 
         public void Draw(SpriteBatch spriteBatch, Texture2D texture)
