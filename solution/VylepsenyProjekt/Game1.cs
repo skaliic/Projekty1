@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
 namespace VylepsenyProjekt
@@ -14,7 +14,6 @@ namespace VylepsenyProjekt
         private List<Player> players;
         private List<Tlacitko> tlacitka;
         private List<Dvere> dvere;
-        private SpriteFont _font; 
 
         private bool levelComplete = false;
 
@@ -59,8 +58,6 @@ namespace VylepsenyProjekt
 
             _squareTexture = new Texture2D(GraphicsDevice, 1, 1);
             _squareTexture.SetData(new[] { Color.White });
-
-            _font = Content.Load<SpriteFont>("DefaultFont");
         }
 
         protected override void Update(GameTime gameTime)
@@ -86,6 +83,7 @@ namespace VylepsenyProjekt
                         break;
                     }
                 }
+
                 if (!playerAtDoor)
                 {
                     allPlayersAtDoors = false;
@@ -94,9 +92,63 @@ namespace VylepsenyProjekt
             }
 
             if (allPlayersAtDoors)
+            {
                 levelComplete = true;
+                NextLevel();
+            }
+                
 
             base.Update(gameTime);
+        }
+
+        private int currentLevel = 1;
+
+        private void NextLevel()
+        {
+            currentLevel++;
+            LoadLevel(currentLevel);
+        }
+
+        private void LoadLevel(int levelNumber)
+        {
+            players.Clear();
+            tlacitka.Clear();
+            dvere.Clear();
+
+            if (levelNumber == 1 )
+            {
+                players.Add(new Player(new Vector2(100, 100), Color.Red, Keys.W, Keys.S, Keys.A, Keys.D));
+                players.Add(new Player(new Vector2(400, 300), Color.Blue, Keys.Up, Keys.Down, Keys.Left, Keys.Right));
+
+                var d1 = new Dvere(new Vector2(50, 250), 20, 100, Color.DarkGreen);
+                var b1 = new Tlacitko(new Vector2(650, 500), 40, Color.Yellow, d1);
+
+                var d2 = new Dvere(new Vector2(730, 150), 20, 100, Color.DarkRed);
+                var b2 = new Tlacitko(new Vector2(150, 50), 40, Color.Orange, d2);
+
+                dvere.Add(d1);
+                dvere.Add(d2);
+                tlacitka.Add(b1);
+                tlacitka.Add(b2);
+            }
+            else if (levelNumber == 2 )
+            {
+                players.Add(new Player(new Vector2(50, 50), Color.Red, Keys.W, Keys.S, Keys.A, Keys.D));
+                players.Add(new Player(new Vector2(700, 500), Color.Blue, Keys.Up, Keys.Down, Keys.Left, Keys.Right));
+
+                var d1 = new Dvere(new Vector2(100, 400), 20, 100, Color.DarkGreen);
+                var b1 = new Tlacitko(new Vector2(400, 100), 40, Color.Yellow, d1);
+
+                var d2 = new Dvere(new Vector2(600, 200), 20, 100, Color.DarkRed);
+                var b2 = new Tlacitko(new Vector2(200, 300), 40, Color.Orange, d2);
+
+                dvere.Add(d1);
+                dvere.Add(d2);
+                tlacitka.Add(b1);
+                tlacitka.Add(b2);
+            }
+
+            levelComplete = false;
         }
 
         protected override void Draw(GameTime gameTime)
@@ -113,12 +165,6 @@ namespace VylepsenyProjekt
 
             foreach (var player in players)
                 player.Draw(_spriteBatch, _squareTexture);
-
-
-            if (levelComplete)
-            {
-                _spriteBatch.DrawString(_font, "Level Complete!", new Vector2(300, 250), Color.Black);
-            }
 
             _spriteBatch.End();
 
@@ -169,7 +215,6 @@ namespace VylepsenyProjekt
             }
 
             wasPlayerOnButtonLastFrame = playerOnButton;
-
         }
 
         public void Draw(SpriteBatch spriteBatch, Texture2D texture)
@@ -200,14 +245,7 @@ namespace VylepsenyProjekt
 
         public void Draw(SpriteBatch spriteBatch, Texture2D texture)
         {
-            if (!IsOpen)
-            {
-                spriteBatch.Draw(texture, BoundingBox, Color);
-            }
-            else
-            {
-                spriteBatch.Draw(texture, BoundingBox, Color * 0.3f);
-            }
+            spriteBatch.Draw(texture, BoundingBox, IsOpen ? Color * 0.3f : Color);
         }
     }
 
@@ -259,7 +297,6 @@ namespace VylepsenyProjekt
             }
 
             Position.Y += move.Y;
-
             foreach (var other in players)
             {
                 if (other == this) continue;
